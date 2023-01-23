@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "fluent-bit.labels" . | nindent 4 }}
+  name: {{ .Values.fluentbitConfig.name }}
+data:
+{{- if .Values.fluentbitConfig }}
+{{ toYaml .Values.fluentbitConfig.config | indent 2 }}
+{{- end }}

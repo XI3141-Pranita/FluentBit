@@ -1,0 +1,38 @@
+apiVersion: charts.konghq.com/v1alpha1
+kind: Kong
+metadata:
+  name: {{ include "kong.name" . }}
+  namespace: {{ include "kong.namespace" . }}
+spec:
+  postgresql:
+    enabled: false
+  image: 
+    repository: {{ .Values.kong.image.repository }}
+    tag: {{ .Values.kong.image.tag }}
+  proxy:
+    type: NodePort
+  env:
+    prefix: /kong_prefix/
+    database: "off"
+    ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 http2 ssl"
+  resources:
+  {{- toYaml .Values.kong.resources | nindent 4 }}
+  ingressController:
+    enabled: true
+    ingressClass: {{ .Values.kong.ingressController.ingessClass }}
+    installCRDs: false
+    image:
+      repository: {{ .Values.kong.ingressController.image.repository }}
+      tag: {{ .Values.kong.ingressController.image.tag | quote }}
+  {{- if .Values.kong.admin.enabled }}
+  admin:
+   enabled: true
+   type: NodePort
+   labels: 
+   {{- toYaml .Values.kong.admin.labels | nindent 6 }}
+   http:
+      enabled: true
+      servicePort: 8001
+      containerPort: 8001
+      parameters: []
+  {{- end -}}

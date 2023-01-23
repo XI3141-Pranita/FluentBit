@@ -1,0 +1,79 @@
+# Default values for kong-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+operator:     
+  namespace: kong-operator
+  image:
+    repository: kong/kong-operator
+    tag: "v0.9.0"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+
+kong:
+  #metadata:
+  #  name: kong
+  #namespace: kong
+  deployment:
+     containerPort:
+       http: 80
+  image:
+    repository: kong
+    tag: "2.5"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  ingressController:
+    ingessClass: kong-class
+    image:
+      repository: kong/kubernetes-ingress-controller
+      tag: '2.0'
+  admin: 
+    enabled: false
+    labels: 
+     kong: prometheus
+
+istio:
+  enabled: true
+  virtualService:
+      enabled: true
+      timeout: 1m
+      host: '*'
+  gateway:
+      enabled: true
+      portName: http
+      portNumber: 80
+      protocol: HTTP
+      ingressHost: '*'
+  authorizationPolicy:
+      enabled: true
+      allowedNamespaces: [kong, istio-system]
+
+
+kongplugin:
+ prometheus: 
+    enabled: false
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+
+serviceMonitor:
+  enabled: false
+  path: /metrics
+  port: http
+  additionalLabels: {}

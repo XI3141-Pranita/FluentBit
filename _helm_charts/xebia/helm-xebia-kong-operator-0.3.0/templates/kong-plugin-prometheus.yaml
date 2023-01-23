@@ -1,0 +1,11 @@
+{{- if .Values.kongplugin.prometheus.enabled }}
+apiVersion: configuration.konghq.com/v1 
+kind: KongClusterPlugin
+metadata:
+  name: {{ include "kong.name" . }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.kong.ingressController.ingessClass }}
+  labels:
+    global: "true"
+plugin: prometheus
+{{- end }}

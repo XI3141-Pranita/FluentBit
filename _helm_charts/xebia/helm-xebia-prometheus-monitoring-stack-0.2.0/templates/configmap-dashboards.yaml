@@ -1,0 +1,42 @@
+{{- $ns := .Release.Namespace -}}
+{{- $name := "ext-dashboards-cm" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}
+  namespace: {{ $ns }}
+data:
+##Istio dashboards
+{{- if .Values.dashboards.istio.enabled }}
+{{- $istiofiles := .Files.Glob "dashboards/istio*.json" }}
+{{- if $istiofiles }}
+{{- range $path, $fileContents := $istiofiles }}
+{{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+    {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+##kong dashboards
+{{- if .Values.dashboards.kong.enabled }}
+{{- $kongfiles := .Files.Glob "dashboards/kong*.json" }}
+{{- if $kongfiles }}
+{{- range $path, $fileContents := $kongfiles }}
+{{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+    {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+##springboot dashboards
+
+{{- if .Values.dashboards.springboot.enabled }}
+{{- $springbootfiles := .Files.Glob "dashboards/springboot*.json" }}
+{{- if $springbootfiles }}
+{{- range $path, $fileContents := $springbootfiles }}
+{{- $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+    {{ $dashboardName }}.json: {{ $.Files.Get $path | toJson }}
+{{- end }}
+{{- end }}
+{{- end }}
+

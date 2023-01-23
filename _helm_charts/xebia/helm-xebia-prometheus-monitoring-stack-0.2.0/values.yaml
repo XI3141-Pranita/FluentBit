@@ -1,0 +1,64 @@
+# EKS specific (controlplane is not accessable)
+dashboards:
+  kong:
+    enabled: false
+  istio:
+    enabled: false
+  springboot:
+    enabled: false
+kube-prometheus-stack:
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
+  grafana:
+    # enable the dashboardProviders and dashboardsConfigMaps if dashboards are enabled. 
+    # dashboardProviders:
+    #   dashboardproviders.yaml:
+    #     apiVersion: 1
+    #     providers:
+    #     - name: 'ext-dashboards'
+    #       orgId: 1
+    #       folder: ''
+    #       type: file
+    #       disableDeletion: false
+    #       editable: true
+    #       options:
+    #         path: /var/lib/grafana/dashboards/ext-dashboards
+
+    # dashboardsConfigMaps:
+    #   ext-dashboards: "ext-dashboards-cm"  
+
+    persistence:
+      type: pvc
+      enabled: false
+      #storageClassName: default
+      #accessModes:
+      #   - ReadWriteOnce
+      #size: 10Gi
+    ingress:
+      enabled: true
+      hosts: 
+      - grafana.mb2dev.xyz.com
+    admin:
+      existingSecret: "grafana-auth"
+    sidecar:
+      dashboards:
+        searchNamespace: ALL
+  prometheus:
+    ingress:
+      enabled: true
+      hosts: 
+      - prometheus.mb2dev.abc.com
+    prometheusSpec: 
+      storageSpec: {}
+      #  volumeClaimTemplate:
+      #    spec:
+      #      storageClassName: gluster
+      #      accessModes: ["ReadWriteOnce"]
+      #      resources:
+      #        requests:
+      #          storage: 10Gi

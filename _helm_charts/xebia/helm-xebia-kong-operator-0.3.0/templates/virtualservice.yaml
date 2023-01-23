@@ -1,0 +1,21 @@
+{{- if and .Values.istio.enabled .Values.istio.virtualService.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kong.name" . }}
+  namespace: {{ include "kong.namespace" . }}
+  labels:
+    {{- include "kong-operator.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - '{{ .Values.istio.virtualService.host }}'
+  gateways:
+  - {{ include "kong.name" . }}
+  http:
+  - timeout: {{ .Values.istio.virtualService.timeout }}
+    route:
+    - destination:
+        port:
+          number: {{ .Values.kong.deployment.containerPort.http }}
+        host: {{ include "kong.name" . }}-kong-proxy.{{ include "kong.namespace" . }}.svc.cluster.local
+{{- end }}

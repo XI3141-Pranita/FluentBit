@@ -1,0 +1,12 @@
+apiVersion: v2
+name: helm-xebia-monitoring
+description: A Helm chart to setup Monitoring Solution
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+dependencies:
+ - name: kube-prometheus-stack
+   version: "20.0.1"
+   repository: https://prometheus-community.github.io/helm-charts
+   condition: KubePrometheusStack.enabled
